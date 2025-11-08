@@ -1,0 +1,104 @@
+---
+const sections = [
+  {
+    title: '1. Install dependencies',
+    body: 'Run `npm install` once so that linting and formatting commands become available.',
+  },
+  {
+    title: '2. Start the dev server',
+    body: 'Use `npm run dev` and open http://localhost:4321 to iterate on the TODO UI.',
+  },
+  {
+    title: '3. Keep things tidy',
+    body: 'Format with `npm run format:write` and lint via `npm run lint` before sending PRs.',
+  },
+];
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro TODO Playground</title>
+    <style>
+      :root {
+        color-scheme: dark light;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        line-height: 1.5;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(circle at top, #0f172a, #020617);
+        color: #f8fafc;
+      }
+
+      main {
+        width: min(720px, 90vw);
+        padding: 3rem;
+        border-radius: 1.25rem;
+        background: rgba(2, 6, 23, 0.72);
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        box-shadow: 0 25px 70px rgba(15, 23, 42, 0.55);
+      }
+
+      h1 {
+        font-size: clamp(2.25rem, 3vw, 3rem);
+        margin-bottom: 1rem;
+      }
+
+      p.lede {
+        color: #cbd5f5;
+        margin-bottom: 2.5rem;
+      }
+
+      section + section {
+        margin-top: 1.25rem;
+      }
+
+      section {
+        padding: 1rem 1.25rem;
+        border-radius: 0.85rem;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+      }
+
+      section h2 {
+        margin: 0 0 0.4rem;
+        font-size: 1.1rem;
+        color: #38bdf8;
+      }
+
+      code {
+        font-weight: 600;
+      }
+
+      a {
+        color: #fcd34d;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Astro TODO Playground</h1>
+      <p class="lede">
+        Use this sandbox to wire up the TODO experience described in the GitHub Project backlog. The
+        initial milestone is now complete -- the project boots, linting works, and formatting is consistent.
+      </p>
+      {sections.map((section) => (
+        <section>
+          <h2>{section.title}</h2>
+          <p set:html={section.body.replace(/`([^`]+)`/g, '<code>$1</code>')} />
+        </section>
+      ))}
+      <p style="margin-top: 2rem; color: #cbd5f5;">
+        Need GitHub CLI tips? Check the <code>docs/gh-cli.md</code> guide inside the repository.
+      </p>
+    </main>
+  </body>
+</html>
