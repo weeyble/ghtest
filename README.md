@@ -54,3 +54,43 @@
    必要に応じて `gh issue close <番号>` や `gh project item-update` で状態を Done に移すと、TODO リストが常に最新の状態になります。
 
 上記をベースに、Organization/個人リポジトリに合わせて `your-org` や `GH_REPO` を書き換えて利用してください。
+
+## Astro TODO アプリ開発 Project を作る
+Astro 製 TODO アプリを実装する際に、そのまま Project に流し込めるタスクセットを以下にまとめました。`your-org` や `GH_REPO`、`PROJECT_ID` は環境に合わせて変更してください。
+
+### 1. Project を作成し基本フィールドを準備
+```bash
+export PROJECT_ID=$(gh project create --owner your-org --title "Astro TODO App" --template board --format json | jq -r '.number')
+# 既存 Project を使う場合は番号を直接設定
+# export PROJECT_ID=3
+
+gh project field-list $PROJECT_ID --owner your-org
+# UI から Status(Backlog/In Progress/Review/Done), Priority, Target release などを用意しておく
+```
+
+### 2. タスク (Issue) を作成して Project に流し込む
+| フェーズ | Issue タイトル例 | 目的/完了条件 | 代表コマンド |
+| --- | --- | --- | --- |
+| セットアップ | `[Astro] プロジェクトの初期セットアップ` | `npm create astro@latest` で新規アプリを作り、ESLint/Prettier を導入 | `gh issue create -R $GH_REPO -t "[Astro] プロジェクトの初期セットアップ" -b "## ToDo\n- npm create astro@latest\n- ESLint/Prettier 設定\n- 初期コミット" --label todo`
+| UI 設計 | `[Astro] TODO レイアウトとUI設計` | ヘッダー/入力欄/リスト/フィルタのワイヤーフレームとスタイルを決定 | `gh issue create ... --title "[Astro] TODO レイアウトとUI設計" --body "## 完了条件\n- ベースとなるUI設計\n- コンポーネント構成方針"`
+| 機能実装 | `[Astro] TODO CRUD 機能` | 追加/編集/完了/削除をハンドラで実装、状態は `src/components/TodoList.astro` で管理 | `gh issue create ... --title "[Astro] TODO CRUD 機能" --body "- アイテム追加フォーム\n- 完了トグル\n- ローカル状態管理"`
+| 状態永続化 | `[Astro] localStorage 永続化` | ブラウザ localStorage へ保存・復元、初期データロードと同期処理 | `gh issue create ... --title "[Astro] localStorage 永続化" --body "- マウント時にロード\n- 変更時に保存"`
+| フィルタ/UX | `[Astro] フィルタとアクセシビリティ向上` | All/Active/Completed のフィルタ、キーボード操作や ARIA | `gh issue create ... --title "[Astro] フィルタとアクセシビリティ向上"`
+| テスト/CI | `[Astro] テストとCI整備` | コンポーネントテスト(Vitest)とGitHub Actions(ビルド+Lint) | `gh issue create ... --title "[Astro] テストとCI整備"`
+| デプロイ | `[Astro] デプロイとREADME更新` | Vercel/Netlify へデプロイ、環境変数や usage を README に追記 | `gh issue create ... --title "[Astro] デプロイとREADME更新"`
+
+各 Issue を Project に追加するには、作成後に URL を渡します。
+```bash
+ISSUE_URL=https://github.com/$GH_REPO/issues/<番号>
+gh project item-add $PROJECT_ID --owner your-org --url $ISSUE_URL
+```
+必要に応じて `gh project item-update` でフィールド (Status/Priority/Target release など) を更新し、進捗を管理します。
+
+### 3. 定期的な進捗レビュー
+```bash
+# ボードで全体確認
+gh project view $PROJECT_ID --owner your-org
+# 着手中/ブロッカーの洗い出し
+gh issue list -R $GH_REPO --label todo --state open
+```
+以上を基盤に、Astro TODO アプリの要件変更や追加機能に合わせて Issue/Project を拡張してください。
